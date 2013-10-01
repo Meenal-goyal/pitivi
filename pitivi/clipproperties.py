@@ -223,6 +223,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
         # Prepare the main container widgets and lay out everything
         self._vcontent = Gtk.VPaned()
+        self.removeHapp = False
         self._table = Gtk.Table(3, 1, False)
         self._table.attach(self.treeview_scrollwin, 0, 1, 0, 1)
         self._table.attach(self._toolbar, 0, 1, 2, 3, yoptions=Gtk.AttachOptions.FILL)
@@ -316,6 +317,7 @@ class EffectProperties(Gtk.Expander, Loggable):
 
     def _removeEffect(self, effect):
         self.app.action_log.begin("remove effect")
+        self.removeHapp = True
         if self._effect_config_ui:
             self._effect_config_ui.get_children()[0].get_children()[0].resetKeyframeToggleButtons()
         self._cleanCache(effect)
@@ -452,10 +454,11 @@ class EffectProperties(Gtk.Expander, Loggable):
             element = effect
             ui = self.effect_props_handling.getEffectConfigurationUI(element)
 
-            if self._effect_config_ui:
-                self._effect_config_ui.get_children()[0].get_children()[0].resetShowKeyframesButton()
+            if not self.removeHapp and self._effect_config_ui:
+                self._effect_config_ui.get_children()[0].get_children()[0].resetKeyframeToggleButtons()
 
             self._effect_config_ui = ui
+            self.removeHapp = False
             if self._effect_config_ui:
                 self._vcontent.pack2(self._effect_config_ui, resize=False, shrink=False)
                 self._vcontent.set_position(int(self._config_ui_h_pos))
